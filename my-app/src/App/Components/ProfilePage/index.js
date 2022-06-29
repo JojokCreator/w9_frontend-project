@@ -9,7 +9,7 @@ const ProfilePage = ({ id }) => {
   const [inputValue, setInputValue] = useState([{}]);
   const [isDisabled, setIsDisabled] = useState("none");
   const [isDisabledText, setIsDisabledText] = useState("#e0e0e2");
-  const [userDetails, setUserDetails] = useState([]);
+  const [userDetails, setUserDetails] = useState({});
   const [createEventError, setCreateEventError] = useState();
 
   const navigate = useNavigate();
@@ -29,28 +29,34 @@ const ProfilePage = ({ id }) => {
       ? setIsDisabledText("var(--primary-blue)")
       : setIsDisabledText("#e0e0e2");
   }
+  //Fetches the user details to be used in the form
+  async function fetchUserDetails() {
+    const res = await fetch('http://localhost:5000/users/'+ id, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      mode: "cors",
+      credentials: "include",
+    });
+    const response = await res.json();
+    return response
+  }
+
   useEffect(() => {
-    //checks to see if the user is logged in ie. has a valid token
-    async function fetchUserDetails() {
-      const res = await fetch(`http://localhost:5000/users/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        mode: "cors",
-        credentials: "include",
-      });
-      //saves the encrypted token to state (bad practice i think needs to be changed later)
-      const response = await res.json();
-      setUserDetails(response);
+    async function getApiAndSetState() {
+    let data = await fetchUserDetails();
+    console.log(data)
+    setUserDetails(data.Payload);
+    console.log(userDetails)
     }
-    //runs the function
-    fetchUserDetails();
+    getApiAndSetState()
   }, []);
 
-  //Work in progress for the profile page to get the users details to be able to be changed TODO
+
+  //Submits the patch request to change the data
   async function submitUser() {
     (async () => {
-      const response = await fetch(`http://localhost:5000/users/${id}`, {
+      const response = await fetch('http://localhost:5000/users/' + id, {
         method: "PATCH",
         headers: {
           Accept: "application/json",
@@ -93,7 +99,7 @@ const ProfilePage = ({ id }) => {
   }
   return (
     <div>
-      <header className="header">
+        <header className="header">
         <img
           className="our-logo"
           src="/mainLogo.png"
@@ -110,8 +116,8 @@ const ProfilePage = ({ id }) => {
         </p>
 
       </header>
+      
       <br></br>
-
       <div className="login-inputs">
         <h1 className="h1-styling">My Profile</h1>
         <div className="profile-page-button-and-icon-spacing">
@@ -127,7 +133,7 @@ const ProfilePage = ({ id }) => {
           handleChange={handleChange}
           name="first_name"
           placeholder="Enter your First Name"
-          default="Joe"
+          default={userDetails && userDetails[0] && userDetails[0].first_name}
           disabled={isDisabled}
           isDisabledText={isDisabledText}
         />
@@ -136,7 +142,7 @@ const ProfilePage = ({ id }) => {
           handleChange={handleChange}
           name="last_name"
           placeholder="Enter your Surname"
-          default="Blogs"
+          default={userDetails && userDetails[0] && userDetails[0].last_name}
           disabled={isDisabled}
           isDisabledText={isDisabledText}
         />
@@ -155,8 +161,8 @@ const ProfilePage = ({ id }) => {
           inputType="password"
           handleChange={handleChange}
           name="password"
-          placeholder="Enter a Password"
-          default="password"
+          placeholder="Enter a New Password"
+          default={""}
           disabled={isDisabled}
           isDisabledText={isDisabledText}
         />
@@ -165,7 +171,7 @@ const ProfilePage = ({ id }) => {
           handleChange={handleChange}
           name="house_number"
           placeholder="House/Flat Name or Number"
-          default="12"
+          default={userDetails && userDetails[0] && userDetails[0].house_number}
           disabled={isDisabled}
           isDisabledText={isDisabledText}
         />
@@ -174,7 +180,7 @@ const ProfilePage = ({ id }) => {
           handleChange={handleChange}
           name="street_address"
           placeholder="Street Address"
-          default="New Street"
+          default={userDetails && userDetails[0] && userDetails[0].street_address}
           disabled={isDisabled}
           isDisabledText={isDisabledText}
         />
@@ -183,7 +189,7 @@ const ProfilePage = ({ id }) => {
           handleChange={handleChange}
           name="town"
           placeholder="Town/City"
-          default="Birmingham"
+          default={userDetails && userDetails[0] && userDetails[0].town}
           disabled={isDisabled}
           isDisabledText={isDisabledText}
         />
@@ -192,7 +198,7 @@ const ProfilePage = ({ id }) => {
           handleChange={handleChange}
           name="region"
           placeholder="Region"
-          default="West Midlands"
+          default={userDetails && userDetails[0] && userDetails[0].region}
           disabled={isDisabled}
           isDisabledText={isDisabledText}
         />
@@ -201,7 +207,7 @@ const ProfilePage = ({ id }) => {
           handleChange={handleChange}
           name="postcode"
           placeholder="Postcode"
-          default="B4 5QE"
+          default={userDetails && userDetails[0] && userDetails[0].postcode}
           disabled={isDisabled}
           isDisabledText={isDisabledText}
         />
@@ -210,6 +216,7 @@ const ProfilePage = ({ id }) => {
         <br></br>
         <br></br>
         <LittleGreenButton
+        handleClick={submitUser}
           className="little-green-button"
           buttonText={"Save Changes"}
         />
@@ -232,5 +239,6 @@ const ProfilePage = ({ id }) => {
     </div>
   );
 };
+
 
 export default ProfilePage;
