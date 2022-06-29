@@ -8,15 +8,36 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const MainPage = ({ id, token }) => {
-  const [events, setEvents] = useState("");
-  const [data, setData] = useState("");
-  const [sortType, setSortType] = useState("albums");
+  const [events, setEvents] = useState([]);
+  const [data, setData] = useState([]);
+  const [sortType, setSortType] = useState([]);
   const navigate = useNavigate();
 
-  //Gets GPS Position and works out distances TODO
 
-  useEffect(() => {
-    //gets the events
+      //This function takes in latitude and longitude of two location and returns the distance between them as the crow flies (in km)
+      function calcCrow(lat1, lon1, lat2, lon2) 
+      {
+        var R = 6371; // km
+        var dLat = toRad(lat2-lat1);
+        var dLon = toRad(lon2-lon1);
+        lat1 = toRad(lat1);
+        lat2 = toRad(lat2);
+  
+        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        var d = R * c;
+        return d;
+      }
+  
+      // Converts numeric degrees to radians
+      function toRad(Value) 
+      {
+          return Value * Math.PI / 180;
+      }
+
+
+        //gets the events
     async function fetchData() {
       const res = await fetch("http://localhost:5000/events", {
         headers: {
@@ -25,15 +46,24 @@ const MainPage = ({ id, token }) => {
         mode: "cors",
         credentials: "include",
       });
-      const data = await res.json();
-      setData(data.Payload);
-      return data;
+  
+      return await res.json();
     }
-    //runs the function
-    fetchData();
-  }, []);
 
-  useEffect(() => {
+    //Distance
+    function getDistance(fetchedData) {
+      navigator.geolocation.getCurrentPosition( (position) => {
+        const pos = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,}
+          const newArray = (fetchedData.Payload.map(x => ({
+            ...x,
+            distance: calcCrow(x.lat, x.long, pos.lat, pos.lng)
+          })
+          ))
+          setData(newArray)
+        });  
+  }
     //sorts the data using a sorting table linked to the filters dropdown
     //Currently the sort by location does not have a function TODO
     const sortArray = (type) => {
@@ -42,21 +72,36 @@ const MainPage = ({ id, token }) => {
         name_of_event_host: "name_of_event_host",
         start_time: "start_time",
         end_time: "end_time",
+        distance: "distance"
       };
       const sortProperty = types[type];
       const sorted = [...data].sort((a, b) => {
         if (sortProperty === "name_of_event") {
           return a.name_of_event.localeCompare(b.name_of_event);
+
         } else if (sortProperty === "name_of_event_host") {
           return a.name_of_event_host.localeCompare(b.name_of_event_host);
+
+        } else if (sortProperty === "distance") {
+          return a[sortProperty] - b[sortProperty];
+
         } else {
           return Date.parse(a[sortProperty]) - Date.parse(b[sortProperty]);
         }
       });
-      setEvents(sorted);
+      setEvents(sorted)
     };
+    useEffect(() => {
+      async function GetData() {
+      const fetchedData = await fetchData()
+      getDistance(fetchedData)
+      }
 
-    sortArray(sortType);
+      GetData()
+  }, []);
+
+  useEffect(() => {
+      sortArray(sortType);
   }, [data, sortType]);
 
   return (
@@ -109,6 +154,7 @@ const MainPage = ({ id, token }) => {
         </div>
       </div>
        {/*Renders the events list*/}
+
       <ul className="event-list-main-page">
         {events &&
           events.map((event) => (
@@ -130,6 +176,7 @@ const MainPage = ({ id, token }) => {
                 start_time={event.start_time}
                 street_address={event.street_address}
                 town={event.town}
+                distance={event.distance}
               />
             </li>
           ))}
