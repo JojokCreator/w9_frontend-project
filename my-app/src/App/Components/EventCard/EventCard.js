@@ -38,6 +38,9 @@ const EventCard = (props) => {
         <p style={{ display: visible }} className="end-time">
           Ends {formatDate(props.end_time)}
         </p>
+        <p style={{ display: visible }} className="distance">
+          Distance {parseFloat(props.distance).toFixed(2) + 'km'}
+        </p>
         <p style={{ display: visible }}>
           Address:<br></br>
           {props.house_number}
