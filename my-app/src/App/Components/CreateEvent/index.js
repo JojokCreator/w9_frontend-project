@@ -11,7 +11,8 @@ const CreateEvent = (props) => {
   const [inputValue, setInputValue] = useState([{}]);
   const [latLong, setlatLong] = useState("");
   const [PostEventError, setPostEventError] = useState([]);
-
+  const [imageUploaded, setimageUploaded] = useState();
+  const [image, setImage] = useState({})
   const navigate = useNavigate();
 
   function handleChange(event) {
@@ -19,6 +20,10 @@ const CreateEvent = (props) => {
       ...inputValue,
       [event.target.name]: event.target.value,
     });
+  }
+
+  function fileChange(event) {
+    setImage(event.target.files[0]);
   }
 
   const submitEvent = async (e) => {
@@ -30,6 +35,7 @@ const CreateEvent = (props) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          img_url: inputValue.img_url,
           name_of_event: inputValue.name_of_event,
           event_host: props.id,
           name_of_event_host: inputValue.name_of_event_host,
@@ -48,6 +54,7 @@ const CreateEvent = (props) => {
         }),
       });
       const content = await rawResponse.json();
+      console.log(content)
       if (content.errors) {
         setPostEventError(content.errors);
       } else if (content.Success === true) {
@@ -55,10 +62,32 @@ const CreateEvent = (props) => {
       }
     })();
   };
+
+  const submitImage = async (e) => {
+    (async () => {
+      var formData = new FormData();
+      formData.append("image_url", image);
+      const response = await fetch("http://localhost:5000/events/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const content = await response.json();
+      setimageUploaded(true)
+      setInputValue({
+        ...inputValue,
+        'img_url': 'http://localhost:5000/images/' + content.Payload.filename,
+      });
+      if (content.errors) {
+        console.log(content.errors);
+      } 
+    })();
+  };
+
+
   if (props.id > 0) {
     return (
       <div>
-        <header className="header">
+        <header onClick={()=>{console.log(inputValue)}} className="header">
           <img
             className="our-logo"
             src="/mainLogo.png"
@@ -162,12 +191,22 @@ const CreateEvent = (props) => {
             className="large-text-input"
             placeholder="Say a little about your Event. Is it just a social? Is it a Study Session? The more the merrier."
           />
-
           <p className="create-account-styling">Event Logo:</p>
+          {(!imageUploaded) ? 
+          <>
           <OrangeButton
+            handleClick={(e) => {
+              e.preventDefault();
+              submitImage();
+            }}
             className="orange-button"
             buttonText={"Upload from your Device"}
-          />
+          /> 
+          <br></br>
+          <input onChange={fileChange} type="file" id="avatar" name="image_url" accept="image/png, image/jpeg"/>
+          </>
+          : <h2>Image Uploaded</h2>
+          }
           <br></br>
           {PostEventError.map((error, i) => (
             <h1 key={i} className="login-error-message">
