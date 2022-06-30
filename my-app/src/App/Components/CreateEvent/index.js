@@ -170,7 +170,7 @@ const CreateEvent = (props) => {
             name="start_time"
             onChange={handleChange}
             min="2022-01-01T00:00"
-            max="2100-01-01T00:00"
+            max="2023-01-01T00:00"
           />
           <p className="create-account-styling">End Time:</p>
           <input
@@ -180,7 +180,7 @@ const CreateEvent = (props) => {
             name="end_time"
             onChange={handleChange}
             min="2022-01-01T00:00"
-            max="2100-01-01T00:00"
+            max="2023-01-01T00:00"
           />
 
           <br></br>
@@ -203,7 +203,8 @@ const CreateEvent = (props) => {
             buttonText={"Upload from your Device"}
           /> 
           <br></br>
-          <input onChange={fileChange} type="file" id="avatar" name="image_url" accept="image/png, image/jpeg"/>
+          <br></br>
+          <input onChange={fileChange} type="file" id="upload-button" name="image_url" accept="image/png, image/jpeg"/>
           </>
           : <h2>Image Uploaded</h2>
           }
