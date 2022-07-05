@@ -23,7 +23,7 @@ const Login = () => {
 	//Sends a POST request to log in
 	async function submitUser(e) {
 		(async () => {
-			const response = await fetch("http://localhost:5000/login", {
+			const response = await fetch(`${process.env.REACT_APP_URL}/login`, {
 				method: "POST",
 				credentials: "include",
 				cache: "no-cache",

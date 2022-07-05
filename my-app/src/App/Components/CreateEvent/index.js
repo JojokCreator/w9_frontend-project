@@ -28,7 +28,7 @@ const CreateEvent = (props) => {
 
   const submitEvent = async (e) => {
     (async () => {
-      const rawResponse = await fetch("http://localhost:5000/events", {
+      const rawResponse = await fetch(`${process.env.REACT_APP_URL}/events`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -67,7 +67,7 @@ const CreateEvent = (props) => {
     (async () => {
       var formData = new FormData();
       formData.append("image_url", image);
-      const response = await fetch("http://localhost:5000/events/upload", {
+      const response = await fetch(`http:/${process.env.REACT_APP_URL}/events/upload`, {
         method: "POST",
         body: formData,
       });
@@ -75,7 +75,7 @@ const CreateEvent = (props) => {
       setimageUploaded(true)
       setInputValue({
         ...inputValue,
-        'img_url': 'http://localhost:5000/images/' + content.Payload.filename,
+        'img_url': `${process.env.REACT_APP_URL}/images/` + content.Payload.filename,
       });
       if (content.errors) {
         console.log(content.errors);

@@ -15,7 +15,7 @@ function App() {
 	useEffect(() => {
 		//checks to see if the user is logged in ie. has a valid token
 		async function fetchRefreshToken() {
-			const res = await fetch("http://localhost:5000/refresh_token", {
+			const res = await fetch(`${process.env.REACT_APP_URL}/refresh_token`, {
 				headers: {
 					"Content-Type": "application/json",
 				},

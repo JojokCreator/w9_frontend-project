@@ -31,7 +31,7 @@ const ProfilePage = ({ id }) => {
 	}
 	//Fetches the user details to be used in the form
 	async function fetchUserDetails() {
-		const res = await fetch("http://localhost:5000/users/" + id, {
+		const res = await fetch(`${process.env.REACT_APP_URL}/users/` + id, {
 			headers: {
 				"Content-Type": "application/json",
 			},
@@ -54,7 +54,7 @@ const ProfilePage = ({ id }) => {
 	//Submits the patch request to change the data
 	async function submitUser() {
 		(async () => {
-			const response = await fetch("http://localhost:5000/users/" + id, {
+			const response = await fetch(`${process.env.REACT_APP_URL}/users/` + id, {
 				method: "PATCH",
 				headers: {
 					Accept: "application/json",
@@ -83,7 +83,7 @@ const ProfilePage = ({ id }) => {
 	}
 	//logs the user out (Deletes the token)
 	async function deleteToken() {
-		const res = await fetch("http://localhost:5000/refresh_token", {
+		const res = await fetch(`${process.env.REACT_APP_URL}/refresh_token`, {
 			method: "DELETE",
 			headers: {
 				"Content-Type": "application/json",
