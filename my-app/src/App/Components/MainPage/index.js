@@ -46,7 +46,7 @@ const MainPage = ({ id, token }) => {
 
 	//gets the events
 	async function fetchData() {
-		const res = await fetch("http://localhost:5000/events", {
+		const res = await fetch(`${process.env.REACT_APP_URL}/events`, {
 			headers: {
 				"Content-Type": "application/json",
 			},
