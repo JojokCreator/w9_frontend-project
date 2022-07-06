@@ -67,7 +67,7 @@ const CreateEvent = (props) => {
     (async () => {
       var formData = new FormData();
       formData.append("image_url", image);
-      const response = await fetch(`http:/${process.env.REACT_APP_URL}/events/upload`, {
+      const response = await fetch(`${process.env.REACT_APP_URL}/events/upload`, {
         method: "POST",
         body: formData,
       });
