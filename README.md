@@ -3,12 +3,7 @@
 
 This is the Front End of our Mid-way project for School of Code, we were presented with the task of creating an app that would help a bootcamper through this experience. After some discussion we decided to create an APP centered around meeting other bootcampers outside of Bootcamp Hours.
 
-As of 28/6/2022 the app is not deployed and so you will have to run it locally to view.
-
-
-
-
-
+App is deployed [here](https://front-end-bootcamper-social.netlify.app/)
 
 ## Run Locally
 
@@ -48,14 +43,7 @@ Working Features
 - Create event
 - Logout (By clicking profile icon)
 - Expand events on main page
-- Filters work with execption of (Distance)
-
-
-Features That Need Work:
-- Cannot edit profiles
-- Can't use search bar for events
-- Uploading of images , for either profile or logo
-- Converting post code into cordinates and map pinning
+- Filters work.
 
 
 ## Color Reference - All CSS is in App.css
