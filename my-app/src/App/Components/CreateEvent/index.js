@@ -75,7 +75,7 @@ const CreateEvent = (props) => {
       setimageUploaded(true)
       setInputValue({
         ...inputValue,
-        'img_url': `${process.env.REACT_APP_URL}/images/` + content.Payload.filename,
+        'img_url': content.Payload,
       });
       if (content.errors) {
         console.log(content.errors);
