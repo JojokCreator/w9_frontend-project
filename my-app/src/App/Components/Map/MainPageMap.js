@@ -12,6 +12,7 @@ export default function MainPageMap(props) {
 
   return (
     <div>
+     {(!posi)? <h1 className="loading">...Loading Maps</h1> : ""}
       {posi && (
         <MapContainer center={posi} zoom={13} scrollWheelZoom={false}>
           <TileLayer

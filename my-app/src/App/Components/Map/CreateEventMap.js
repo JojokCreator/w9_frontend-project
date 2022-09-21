@@ -13,6 +13,7 @@ export default function CreateEventMap({ setlatLong }) {
 
   return (
     <div>
+      {(!posi)? <h1 className="loading">...Loading Maps</h1> : ""}
       {/*Renders the Map */}
       {posi && (
         <MapContainer center={posi} zoom={13} scrollWheelZoom={false}>
